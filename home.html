@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cloud Foundry Golang Chat</title>
+</head>
+<body>
+<h1>Chat</h1>
+<h3>I made this chat app with a Go server that is hosted on Cloud Foundry</h3>
+
+<div style="margin: 50px;">'
+    <ul id="chat">
+
+    </ul>
+</div>
+
+<form id="sendMessages" onsubmit="sendMessages()">
+    <input type="text" autofocus>
+    <input type="submit" value="Send">
+</form>
+
+
+<script   src="https://code.jquery.com/jquery-2.2.4.min.js"   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="   crossorigin="anonymous"></script>
+<script type="text/javascript">
+
+    var server = "http://brian-go-rest.cfapps.io/";
+//var server = "http://localhost:8080/";
+
+
+
+
+    var sendMessages = function(e) {
+        message = String($('#sendMessages input').val());
+        message = message.trim();
+        $.ajax(server + "test",
+                {
+                    method: "POST",
+                    data: message
+                }
+        );
+        e.preventDefault();
+    };
+
+    var getMessages = function() {
+        $.ajax(server + "getMessages",
+                {
+                    method: "GET"
+                }
+        ).done(function(data) {
+            renderedMessages = $('#chat li').length;
+            for( var i = renderedMessages; i < data.length; i++ ) {
+                $('#chat').append("<li>" + data[i] + "</li>");
+            }
+        });
+        setTimeout(getMessages, 5000);
+    };
+
+    getMessages();
+
+    $("#sendMessages").submit(function(e) {
+        e.preventDefault();
+    });
+
+</script>
+
+</body>
+</html>

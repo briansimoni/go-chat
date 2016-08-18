@@ -1,0 +1,5 @@
+---
+applications:
+  - name: brian-go-rest
+    memory: 256M
+    instances: 1
