@@ -31,15 +31,15 @@ func main() {
 	restful.Add(ws)
 
 	d := new(restful.WebService)
-	ws.Route(d.POST("/test").To(testfunc))
-	ws.Route(d.POST("/send").To(testfunc))
+	ws.Route(d.POST("/test").To(sendMessages))
+	ws.Route(d.POST("/send").To(sendMessages))
 	ws.Route(d.GET("/getMessages").To(getMessages))
 	http.ListenAndServe(":"+os.Getenv("PORT"), nil)
 }
 
 var dat map[string]interface{}
 
-func testfunc(req *restful.Request, resp *restful.Response) {
+func sendMessages(req *restful.Request, resp *restful.Response) {
 	data, _ := ioutil.ReadAll(req.Request.Body)
 	m := string(data)
 	chat = append(chat, m)

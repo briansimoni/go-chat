@@ -14,7 +14,7 @@
     </ul>
 </div>
 
-<form id="sendMessages" onsubmit="sendMessages()">
+<form id="sendMessages">
     <input type="text" autofocus>
     <input type="submit" value="Send">
 </form>
@@ -23,22 +23,28 @@
 <script   src="https://code.jquery.com/jquery-2.2.4.min.js"   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="   crossorigin="anonymous"></script>
 <script type="text/javascript">
 
-    var server = "http://brian-go-rest.cfapps.io/";
-//var server = "http://localhost:8080/";
+//    var server = "http://brian-go-rest.cfapps.io/";
+var server = "http://localhost:8080/";
 
 
 
+    $("#sendMessages").submit(function(e) {
+        e.preventDefault();
+        sendMessages();
+    });
 
-    var sendMessages = function(e) {
+
+    var sendMessages = function() {
         message = String($('#sendMessages input').val());
         message = message.trim();
-        $.ajax(server + "test",
+        $.ajax(server + "send",
                 {
                     method: "POST",
                     data: message
                 }
         );
-        e.preventDefault();
+
+        message = $('#sendMessages input:first-of-type').val('');
     };
 
     var getMessages = function() {
@@ -52,14 +58,10 @@
                 $('#chat').append("<li>" + data[i] + "</li>");
             }
         });
-        setTimeout(getMessages, 5000);
+        setTimeout(getMessages, 2500);
     };
 
     getMessages();
-
-    $("#sendMessages").submit(function(e) {
-        e.preventDefault();
-    });
 
 </script>
 
