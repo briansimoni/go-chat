@@ -1,3 +1,10 @@
 .idea
 web.go
 struct.go
+db.go
+goroutine.go
+goroutine2.go
+login.html
+socket.go
+vender/*
+vendor/github.com/go-sql-driver/

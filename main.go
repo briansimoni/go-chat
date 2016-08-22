@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"fmt"
+	"text/template"
 )
 
 // This example shows the minimal code needed to get a restful.WebService working.
@@ -42,6 +43,7 @@ var dat map[string]interface{}
 func sendMessages(req *restful.Request, resp *restful.Response) {
 	data, _ := ioutil.ReadAll(req.Request.Body)
 	m := string(data)
+	m = template.HTMLEscapeString(m)
 	chat = append(chat, m)
 	fmt.Println(chat)
 	fmt.Println(len(chat))

@@ -12,6 +12,11 @@
 			"ImportPath": "github.com/emicklei/go-restful/log",
 			"Comment": "v1.2-79-g89ef8af",
 			"Rev": "89ef8af493ab468a45a42bb0d89a06fccdd2fb22"
+		},
+		{
+			"ImportPath": "github.com/go-sql-driver/mysql",
+			"Comment": "v1.2-198-g0b58b37",
+			"Rev": "0b58b37b664c21f3010e836f1b931e1d0b0b0685"
 		}
 	]
 }
