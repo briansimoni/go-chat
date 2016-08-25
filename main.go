@@ -1,8 +1,4 @@
 
-//note to self
-// can login with github, get authorization code and save to sessions with uuid
-// next steps is to send a POST to github with client id, secret, and authorization code
-// then save the returned token as a key:value with the uuid in the session
 package main
 
 import (
@@ -18,19 +14,10 @@ import (
 	"encoding/json"
 )
 
-// This example shows the minimal code needed to get a restful.WebService working.
-//
-// GET http://localhost:8080/hello
-type message struct {
-	username string
-	password string
-}
-
-var m message
-
 
 var chat[] string
-// they key:value will be uuid:token
+
+// the key:value will be uuid:token
 var sessions map[string] string
 
 
@@ -85,7 +72,7 @@ func sendMessages(req *restful.Request, resp *restful.Response) {
 
 	data, _ := ioutil.ReadAll(req.Request.Body)
 	m := username + ": " + string(data)
-	//m = template.HTMLEscapeString(m)
+	//m = template.HTMLEscapeString(m) // This would prevent people from script injecting
 	chat = append(chat, m)
 	fmt.Println(chat)
 	fmt.Println(len(chat))
@@ -96,14 +83,16 @@ func getMessages(req *restful.Request, resp *restful.Response) {
 }
 
 func hello(req *restful.Request, resp *restful.Response) {
-	cookie, err := req.Request.Cookie("session-id")
-	if err != nil {
-		fmt.Println(err.Error())
+	if verifyLogin(req, resp) {
+		cookie, err := req.Request.Cookie("session-id")
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+		fmt.Println("This is the value of the cookie!:", cookie.Value)
+		fmt.Println("this is the value of the token!:", sessions[cookie.Value]) // access token
+		body, _ := ioutil.ReadFile("home.html")
+		fmt.Fprint(resp, string(body))
 	}
-	fmt.Println("This is the value of the cookie!:", cookie.Value)
-	fmt.Println("this is the value of the token!:", sessions[cookie.Value]) // access token
-	body, _ := ioutil.ReadFile("home.html")
-	fmt.Fprint(resp, string(body))
 }
 
 
@@ -172,4 +161,25 @@ func home(req *restful.Request, resp *restful.Response) {
 
 	body, _ := ioutil.ReadFile("login.html")
 	fmt.Fprint(resp, string(body))
+}
+
+
+// if the user is not logged in, redirect to the home page
+func verifyLogin(req *restful.Request, resp *restful.Response ) bool {
+	cookie, err := req.Request.Cookie("session-id")
+	if cookie.Value != "" {
+		_, exists := sessions[cookie.Value]
+		if !exists {
+			http.Redirect(resp.ResponseWriter, req.Request, "/", 302)
+			return false
+		}
+		return true
+	} else if err != nil {
+		fmt.Println(err.Error())
+		http.Redirect(resp.ResponseWriter, req.Request, "/", 302)
+		return false
+	} else {
+		http.Redirect(resp.ResponseWriter, req.Request, "/", 302)
+		return false
+	}
 }
